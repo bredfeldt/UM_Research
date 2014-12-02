@@ -2,8 +2,9 @@ clear all;
 close all;
 clc;
 
-dir1 = 'D:\jbredfel\Box Sync\UM Medical Physics\VMAT Surface Dose\20141022\';
-
+%dir1 = 'D:\jbredfel\Box Sync\UM Medical Physics\VMAT Surface Dose\20141022\';
+dir1 = 'D:\jbredfel\Box Sync\UM Medical Physics\VMAT Surface Dose\MeasData\Patient1\Trial2\';
+%dir1 = 'F:\20141124_VMAT_vs_IMRT_Rando\';
 %Read the Excel files
 list1 = dir(dir1);
 j = 1;
@@ -29,10 +30,12 @@ for i = 3:length(list1)
     [notes, mean, std, dose] = Read_OSLD_Data(fn);
     
     if mod(j,2) == 1
+        %Mask case
         figure(1);
         plot(dose*35/100,'*');
         hold all;
     else
+        %No Mask case
         figure(2);
         plot(dose*35/100,'*');
         hold all;
@@ -41,12 +44,11 @@ for i = 3:length(list1)
 end
 
 %%
-%Get estimated dose data from spreadsheet
-calc_fn = 'D:\jbredfel\Box Sync\UM Medical Physics\VMAT Surface Dose\20141022\EclipseEstimates\Eclipse Calced Dose.xlsx';
-T = readtable(calc_fn);
-dose_VMAT = table2array(T(1,2:end))';
-dose_VMATSS = table2array(T(2,2:end))';
-dose_IMRT = table2array(T(3,2:end))';
+%Get estimated dose data from dicomExports
+D = CalcDoseEstF();
+dose_IMRT = D(1,:)';
+dose_VMATSS = D(2,:)';
+dose_VMAT = D(3,:)';
 
 figure(1);
 oco=get(gca,'ColorOrder');
