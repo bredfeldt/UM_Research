@@ -54,11 +54,13 @@ for m = 1:num_files
 
         %get the number of control points in the current channel sequence
         cps_fn = fieldnames(ccs.BrachyControlPointSequence);
-        for k = 1:length(cps_fn)
+        idx = 1;
+        for k = 1:2:length(cps_fn)
             ccp_fn = cps_fn(k); %current field name
             ccp = ccs.BrachyControlPointSequence.(ccp_fn{1}); %current control point data
             ccp_3D = ccp.ControlPoint3DPosition; %copy the 3D position data
-            fprintf(fp,'%i,%04f,%04f,%04f\r\n',ccp.ControlPointIndex,ccp_3D(1),ccp_3D(2),ccp_3D(3));
+            fprintf(fp,'%i,%04f,%04f,%04f\r\n',idx,ccp_3D(1),ccp_3D(2),ccp_3D(3));
+            idx = idx + 1;
         end
 
         fprintf(fp,'\r\n');
