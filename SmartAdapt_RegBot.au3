@@ -99,13 +99,13 @@ Func MoveRoiEdge($s)
    If StringCompare("R",$s)==0 Then
 	  ;left
 	  $stX = 900
-	  $stY = 908
+	  $stY = 906
 	  $step = 1
    EndIf
    If StringCompare("L",$s)==0 Then
 	  ;right
 	  $stX = 1470
-	  $stY = 908
+	  $stY = 906
 	  $step = -1
    EndIf
 
@@ -126,14 +126,14 @@ Func MoveRoiEdge($s)
 		 $iColor3 = PixelGetColor(9*$step + $offset + $stX, $stY+1)
 		 If $iColor1==16711680 Or $iColor2==16711680 Or $iColor3==16711680 Then
 			;we found the box!
-			MouseMove(4*$step + $offset + $stX, $stY)
+			MouseMove(3*$step + $offset + $stX, $stY)
 			;MsgBox($MB_SYSTEMMODAL, "", "Color: " & $iColor)
 			ExitLoop
 		 EndIf
 	  EndIf
 	  ;MsgBox($MB_SYSTEMMODAL, "", "Color: " & $iColor)
    Next
-
+   Sleep(100)
    MouseDown("left")
    MouseMove($stX, $stY)
    MouseUp("left")
