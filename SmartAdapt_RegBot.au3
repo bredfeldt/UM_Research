@@ -1,15 +1,25 @@
+#include <MsgBoxConstants.au3>
 
-;first fraction Number
-$ffxnum = 15
 
-For $fxn = $ffxnum To 35 Step 1
+;Constants to be set for each patient. Make sure these are right!
+$ffx = 15;first fraction
+$lfx = 35;last fraction
+$ctn = 2;how many images precede the planning CT image
+Global $skipfx[4] = [19, 24, 29, 34] ;which fractions to skip, can only skip 4
+
+
+;****************************************************************
+;Main Loop
+For $fxn = $ffx To $lfx Step 1
    ;click on image
    MouseClick("left", 879, 176, 2)
-   Sleep(8000)
-   If $fxn==19 Or $fxn==24 Or $fxn==29 Or $fxn==34 Then
+   ;wait for image to open
+   WaitImgOpen($fxn)
+
+   If $fxn==$skipfx[0] Or $fxn==$skipfx[1] Or $fxn==$skipfx[2] Or $fxn==$skipfx[3] Then
 	  ContinueLoop
    EndIf
-   RunReg($fxn)
+   RunReg($fxn,$ctn)
    ;click save
    MouseClick("left",34,85)
    Sleep(60000)
@@ -20,25 +30,54 @@ Next
 ;**************************************
 ;*Functions*
 ;**************************************
-Func RunReg($fxnum)
+Func WaitImgOpen($fxn)
+   ;create window name based on fraction number, this is important that the fx number matches the CBCT Number
+   $win_name = StringFormat("Loading slices of image 'CBCT_%d' - \\Remote",$fxn)
+   Sleep(1000)
+   for $i = 1 to 20 step 1
+	  ;if window disappears, then quit waiting
+	  if WinExists($win_name)==0 Then
+		 ExitLoop
+	  EndIf
+	  ;wait for 1 second and check again
+	  Sleep(1000)
+   Next
+EndFunc
 
+;************************************
+Func RunReg($fxnum,$ctn)
 
    ;click auto match
    MouseClick("left", 616, 85, 1)
    Sleep(1000)
 
    ;enter name of registration
-   MouseClick("left", 909, 419, 2)
+   $wndNm = "New Rigid Registration - \\Remote"
+   WinActivate($wndNm)
+   Send("+{END}")
+
+   ;MouseClick("left", 909, 419, 2)
    $s = StringFormat("CT CBCT FX%d",$fxnum)
    Send($s)
    Sleep(1000)
 
    ;click on CT
-   MouseClick("left", 705, 489, 1)
-   Sleep(1000)
+   Send("{TAB}")
+   Send("{TAB}")
+   for $i = 1 to $ctn step 1
+	  Send("{DOWN}")
+   next
 
    ;send the enter key
    Send("{Enter}")
+   Sleep(1000)
+
+   if WinExists("Operation Failed - \\Remote") Then
+	  MsgBox($MB_SYSTEMMODAL, "", "Error, probably need to activate the course.")
+	  Exit
+   EndIf
+
+
    Sleep(8000)
 
    ;move ROI edges
