@@ -8,7 +8,7 @@ $lfx = 35;last fraction
 ;******
 $ypx_per_fx = 16 ;change in y position per fraction
 $ypx_st_fx = 250 ;starting y position for fraction 1
-$xpx = 340 ;xposition we want to click on
+$xpx = 420 ;xposition we want to click on
 
 for $fxn = $ffx to $lfx step 1
 
